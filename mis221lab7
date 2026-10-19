@@ -1,0 +1,117 @@
+def display_header():
+    print("="*40)
+    print("          Coffee Shop Sales Tracker")
+    print("="*40)
+
+
+def get_positive_integer(prompt):
+    while True:
+        value = int(input(prompt))
+        if value > 0:
+            return value
+        else:
+            print("Please enter a number greater than 0")
+
+
+def build_menu(num_drinks):
+    menu = []
+    for i in range(1, num_drinks + 1):
+        name = input(f"Drink {i} name: ")
+        while name == "":
+            print("Drink name cannot be blank.")
+            name = input(f"Drink {i} name: ")
+        menu.append(name)
+    print()
+    return menu
+
+
+def collect_sales(menu):
+    sales = {}
+    for drink in menu:
+        sales[drink] = get_positive_integer(f"How many {drink}s were sold? ")
+    print()
+    return sales
+
+
+def calculate_total_cups(sales):
+    total = 0
+    for drink, count in sales.items():
+        total += count
+    return total
+
+
+def find_best_seller(sales):
+    best_drink = ""
+    best_count = -1
+    for drink, count in sales.items():
+        if count > best_count:
+            best_drink = drink
+            best_count = count
+    return best_drink
+
+
+def sort_by_cups(menu, sales):
+    ranked = menu[:]
+    n = len(ranked)
+    for i in range(n - 1):
+        max = i
+        for j in range(i + 1, n):
+            if sales[ranked[j]] > sales[ranked[max]]:
+                max = j
+        ranked[i], ranked[max] = ranked[max], ranked[i]
+    return ranked
+
+
+def display_drink_table():
+    print("-"*40)
+    print("  #   Drink                  Cups")
+    print("-"*40)
+
+
+def display_menu(menu, sales):
+    display_drink_table()
+    number = 1
+    for drink in menu:
+        spaces = " " * (25 - len(drink))
+        print("  " + str(number) + "   " + drink + spaces + str(sales[drink]))
+        number += 1
+    print("-"*40)
+    print()
+
+
+def display_summary(total_cups, best_seller, best_count):
+    print("Total sold:      " + str(total_cups))
+    print("Best seller:     " + best_seller +
+          "  (" + str(best_count) + " sold)")
+    print()
+
+
+def display_ranked(ranked, sales):
+    print("Best Sellers")
+    print("-"*40)
+    number = 1
+    for drink in ranked:
+        spaces = " " * (25 - len(drink))
+        print("  " + str(number) + "   " + drink + spaces + str(sales[drink]))
+        number += 1
+
+# main
+
+
+# Display header
+display_header()
+
+# Get inputs
+num_drinks = get_positive_integer("How many drinks are on the menu? ")
+menu = build_menu(num_drinks)
+sales = collect_sales(menu)   # ask how many of each drink were sold
+
+# Analyze
+total_cups = calculate_total_cups(sales)
+best_seller = find_best_seller(sales)
+ranked = sort_by_cups(menu, sales)
+
+# Display
+display_menu(menu, sales)
+display_summary(total_cups, best_seller, sales[best_seller])
+display_ranked(ranked, sales)
